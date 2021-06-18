@@ -18,6 +18,29 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.get('/:search', async (req, res) => {
+  try {
+    const query = req.params.search;
+    const postings = await db('Posting')
+                        .where('title', 'like', '%' + query + '%')
+                        .orWhere('company', 'like', '%' + query + '%')
+                        .orWhere('summary', 'like', '%' + query + '%')
+                        .orWhere('skills', 'like', '%' + query + '%')
+                        .orWhere('email', 'like', '%' + query + '%');
+    res.send({
+      success: true,
+      data: {postings}
+    });
+  } catch(e) {
+    console.log("ERROR while search posting\n" + e);
+    res.send({
+      success: false,
+      message : "Something went wrong",
+      error : e
+    });
+  }
+});
+
 router.post('/', async (req, res) => {
   try {
     var error = [];
